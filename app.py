@@ -18,18 +18,28 @@ CHANNEL_SECRET = os.getenv("CHANNEL_SECRET", "YOUR_CHANNEL_SECRET")
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 
+@app.route("/", methods=['GET'])
+def home():
+    return "NutriFit Bot is running!", 200
+
 @app.route("/callback", methods=['POST'])
 def callback():
-    signature = request.headers['X-Line-Signature']
-    body = request.get_data(as_text=True)
+    signature = request.headers.get('X-Line-Signature', '')
 
-    logging.info(f"Received request: {body}")  # Log the incoming request
+    if not signature:
+        logging.error("Missing signature header")
+        abort(400)
+
+    body = request.get_data(as_text=True)
+    logging.info(f"Received LINE webhook request: {body}")
+
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
-        logging.error("Invalid signature. Check your channel secret.")
+        logging.error("Invalid signature. Check your LINE credentials.")
         abort(400)
-    return 'OK'
+
+    return 'OK', 200
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
