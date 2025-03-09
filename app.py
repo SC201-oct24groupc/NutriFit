@@ -45,6 +45,7 @@ def callback():
 def handle_message(event):
     user_message = event.message.text
     reply_text = f"你想找的食物推薦是: {user_message}!"
+    print(reply_text)
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_text))
 
 if __name__ == "__main__":
