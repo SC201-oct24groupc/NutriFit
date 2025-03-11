@@ -3,13 +3,12 @@ from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
 
-#======python的函數庫==========
 import tempfile, os
 import datetime
 import openai
 import time
 import traceback
-#======python的函數庫==========
+
 
 app = Flask(__name__)
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
