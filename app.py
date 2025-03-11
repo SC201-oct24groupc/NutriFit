@@ -22,7 +22,7 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def GPT_response(text):
     # 接收回應
-    response = openai.Completion.create(model="gpt-4o", prompt=text, temperature=0.7, max_tokens=500)
+    response = openai.ChatCompletion.create(model="gpt-4o", prompt=text, temperature=0.7, max_tokens=500)
     print(response)
     # 重組回應
     answer = response['choices'][0]['text'].replace('。','')
@@ -55,7 +55,7 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
     except:
         print(traceback.format_exc())
-        line_bot_api.reply_message(event.reply_token, TextSendMessage('Hungry'))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage('Hungry,I am not connected'))
         
 
 @handler.add(PostbackEvent)
