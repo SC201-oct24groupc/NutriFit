@@ -11,7 +11,7 @@ from openai import OpenAI
 API = os.getenv('GOOGLE_API_KEY')
 OR_API_KEY = os.getenv('OR_API_KEY')
 api_key = os.getenv('OPENAI_API_KEY')
-client = OpenAI(api_key = api_key)
+# client = OpenAI(api_key = api_key)
 
 
 def main():
@@ -271,7 +271,7 @@ def calculate_order_weight(parsed_orders, current_date):
 # ------------------------------------------------------------------------------------------------------------------#
 
 def openai_api(full_system_message, request):
-    completion = client.chat.completions.create(
+    completion = openai.ChatCompletion.create(
         model="gpt-4o",
         messages=[
             {"role": "system",
