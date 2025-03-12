@@ -2,7 +2,7 @@ from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
-
+from recommendation import main as recommend_food
 import tempfile, os,re
 import datetime
 import openai
@@ -59,16 +59,30 @@ def callback():
 
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
+# def handle_message(event):
+#     msg = event.message.text
+#     try:
+#         GPT_answer = GPT_response(msg)
+#         print(GPT_answer)
+#         line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
+#     except:
+#         print(traceback.format_exc())
+#         line_bot_api.reply_message(event.reply_token, TextSendMessage('Hungry,I am not connected'))
 def handle_message(event):
-    msg = event.message.text
+    user_msg = event.message.text
+    user_address = "你的預設地址或從使用者獲取"
+    mode = 'walking'       # 根據需求設定
+    minutes = 15           # 根據需求設定
+
     try:
-        GPT_answer = GPT_response(msg)
-        print(GPT_answer)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
-    except:
+        GPT_answer = recommend_food(user_address, mode, minutes, user_msg)
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=GPT_answer)
+        )
+    except Exception as e:
         print(traceback.format_exc())
-        line_bot_api.reply_message(event.reply_token, TextSendMessage('Hungry,I am not connected'))
-        
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='
 
 @handler.add(PostbackEvent)
 def handle_message(event):
