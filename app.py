@@ -82,7 +82,7 @@ def handle_message(event):
         )
     except Exception as e:
         print(traceback.format_exc())
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='抱歉，暫時無法提供推薦'))
 
 @handler.add(PostbackEvent)
 def handle_message(event):
