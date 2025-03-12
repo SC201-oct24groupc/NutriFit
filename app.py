@@ -3,7 +3,7 @@ from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
 
-import tempfile, os
+import tempfile, os,re
 import datetime
 import openai
 import time
@@ -19,6 +19,13 @@ handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 # OPENAI API Key初始化設定
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
+def remove_markdown(text):
+    text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
+    text = re.sub(r'\*(.*?)\*', r'\1', text)
+    text = re.sub(r'\[(.*?)\]\(.*?\)', r'\1', text)
+    text = re.sub(r'^#+\s', '', text, flags=re.MULTILINE)
+    text = re.sub(r'^\s*-\s*', '', text, flags=re.MULTILINE)
+    return text
 
 def GPT_response(text):
     # 接收回應
@@ -30,7 +37,8 @@ def GPT_response(text):
     print(response)
     # 重組回應
     answer = response['choices'][0]['message']['content'].strip()
-    return answer
+    clean_answer = remove_markdown(answer)
+    return clean_answer
 
 
 # 監聽所有來自 /callback 的 Post Request
