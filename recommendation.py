@@ -8,11 +8,9 @@ from datetime import datetime
 from geopy.distance import geodesic
 from openai import OpenAI
 
-
-API = 'AIzaSyAbeUNGBay9f8K1k46hNIbKIvumHZVjGgc'
-OR_API_KEY = "5b3ce3597851110001cf6248935e4404f78c443fbec30b30ca472277"
-
-api_key = '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'
+API = os.getenv('GOOGLE_API_KEY')
+OR_API_KEY = os.getenv('OR_API_KEY')
+api_key = os.getenv('OPENAI_API_KEY')
 client = OpenAI(api_key = api_key)
 
 
