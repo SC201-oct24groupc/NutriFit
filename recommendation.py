@@ -1,12 +1,12 @@
 # recommend.py
 import profile
-
+import openai
 import requests, openrouteservice, json, os, time,re
 import pandas as pd
 from collections import Counter, defaultdict
 from datetime import datetime
 from geopy.distance import geodesic
-from openai import OpenAI
+# from openai import OpenAI
 
 API = os.getenv('GOOGLE_API_KEY')
 OR_API_KEY = os.getenv('OR_API_KEY')
