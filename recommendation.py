@@ -202,9 +202,9 @@ def find_restaurant(lat, lng, max_min, mode, radius):
 # Past Data Preprocessing
 
 def read_data(file_name):
-    downloads_path = os.path.expanduser('/Users/Mirandayaolin/Library/Mobile Documents/com~apple~CloudDocs/101/stancodeposter/linebot')
-    file_path = os.path.join(downloads_path, file_name)
-
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, 'transformed_orders_details.csv')
+    
     df = pd.read_csv(file_path, sep=",", on_bad_lines="skip", engine="python")
     half = len(df) * 2 // 3
     df = df.iloc[:half]
