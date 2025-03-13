@@ -2,7 +2,7 @@ from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
-from recommendation import main as recommend_food
+from recommendation import recommend_food
 import tempfile, os,re
 import datetime
 import openai
@@ -70,7 +70,7 @@ def callback():
 #         line_bot_api.reply_message(event.reply_token, TextSendMessage('Hungry,I am not connected'))
 def handle_message(event):
     user_msg = event.message.text
-    user_address = "你的預設地址或從使用者獲取"
+    user_address = "台北市大安區羅斯福路四段一號"
     mode = 'walking'       # 根據需求設定
     minutes = 15           # 根據需求設定
 
