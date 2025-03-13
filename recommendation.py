@@ -327,11 +327,11 @@ def recommend_food(user_address, mode, minutes, user_request):
     return clean_answer
 
 
-def recommend_food(user_address, mode, minutes, user_request):
-    # user_request為使用者透過Line傳進來的訊息
-    result = recommend_food(user_request=user_request, user_address=user_address, mode=mode, profile=profile, minutes=minutes)
-    clean_result = remove_markdown(result)
-    return clean_result
+# def recommend_food(user_address, mode, minutes, user_request):
+#     # user_request為使用者透過Line傳進來的訊息
+#     result = recommend_food(user_request=user_request, user_address=user_address, mode=mode, profile=profile, minutes=minutes)
+#     clean_result = remove_markdown(result)
+#     return clean_result
 
 
 if __name__ == '__main__':
