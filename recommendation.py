@@ -1,23 +1,29 @@
 # recommend.py
 import profile
-import openai
+import openai  #  OpenAI <= 1.0.0
 import requests, openrouteservice, json, os, time,re
 import pandas as pd
 from collections import Counter, defaultdict
 from datetime import datetime
 from geopy.distance import geodesic
-# from openai import OpenAI
+# from openai import OpenAI OpenAI >= 1.0.0
 
 API = os.getenv('GOOGLE_API_KEY')
 OR_API_KEY = os.getenv('OR_API_KEY')
 api_key = os.getenv('OPENAI_API_KEY')
-# client = OpenAI(api_key = api_key)
 
+# client = OpenAI(api_key = api_key) OpenAI >= 1.0.0
+def remove_markdown(text):
+    text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
+    text = re.sub(r'\*(.*?)\*', r'\1', text)
+    text = re.sub(r'\[(.*?)]\(.*?\)', r'\1', text)
+    text = re.sub(r'^#+\s', '', text, flags=re.MULTILINE)
+    text = re.sub(r'^\s*-\s*', '', text, flags=re.MULTILINE)
+    return text
 
 def main():
     # Type in the request
     address = input('Type in your address: ')
-
     num = int(input('Choose a number for your mode(1:walking, 2:driving, 3:delivering): '))
     minutes1 = int(input("Type in the minimum minute you want: "))
     mode, profile, minutes = together(num, minutes1)
@@ -280,12 +286,17 @@ def openai_api(full_system_message, request):
         ],
         temperature=0.7
     )
-    return completion.choices[0].message.content
-
+    return completion['choices'][0]['message']['content']
+    # return completion.choices[0].message.content
+    
 
 # 主推薦函數
 
-def recommend_food(user_address, user_request, mode='walking', profile='foot-walking', minutes=15):
+# def recommend_food(user_address, user_request, mode='walking', profile='foot-walking', minutes=15):
+def recommend_food(user_address, mode, minutes, user_request):
+    mode_mapping = {'walking':'foot-walking', 'driving':'driving-car'}
+    profile = mode_mapping.get(mode, 'foot-walking')
+    
     lat, lng = transform(user_address)
     _, max_dists = get_isochrone(lat, lng, profile, minutes * 60)
     restaurants = find_restaurant(lat, lng, minutes, mode, max_dists)
@@ -315,13 +326,6 @@ def recommend_food(user_address, user_request, mode='walking', profile='foot-wal
     clean_answer = remove_markdown(answer)
     return clean_answer
 
-def remove_markdown(text):
-    text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
-    text = re.sub(r'\*(.*?)\*', r'\1', text)
-    text = re.sub(r'\[(.*?)]\(.*?\)', r'\1', text)
-    text = re.sub(r'^#+\s', '', text, flags=re.MULTILINE)
-    text = re.sub(r'^\s*-\s*', '', text, flags=re.MULTILINE)
-    return text
 
 def recommend_food(user_address, mode, minutes, user_request):
     # user_request為使用者透過Line傳進來的訊息
