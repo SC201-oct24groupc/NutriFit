@@ -69,8 +69,16 @@ def callback():
 #         print(traceback.format_exc())
 #         line_bot_api.reply_message(event.reply_token, TextSendMessage('Hungry,I am not connected'))
 def handle_message(event):
+
+    # prompt user to input expect message, include location, mode, minite
+    line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="請仿照以下格式輸入：e.g. i want eat taco, in new york USA, 10min drive")
+        )
+
+    
     user_msg = event.message.text
-    user_address = "台北市大安區羅斯福路四段一號"
+    user_address = "New York, USA"   #overwritten 
     mode = 'walking'       # 根據需求設定
     minutes = 15           # 根據需求設定
 
