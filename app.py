@@ -2,7 +2,7 @@ from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
-from recommendation import main
+from recommendation import recommend_food_private
 import tempfile, os,re
 import datetime
 import openai
@@ -76,7 +76,7 @@ def handle_message(event):
     minutes = 15           # 根據需求設定
 
     try:
-        GPT_answer = main(user_address, mode, minutes, user_msg)
+        GPT_answer = recommend_food_private(user_address, mode, minutes, user_msg)
         line_bot_api.reply_message(
             event.reply_token,
             [
