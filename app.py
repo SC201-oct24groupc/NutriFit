@@ -2,7 +2,7 @@ from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
-from recommendation import recommend_food
+from recommendation import main
 import tempfile, os,re
 import datetime
 import openai
