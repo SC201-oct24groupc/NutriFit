@@ -334,5 +334,5 @@ def recommend_food(user_address, mode, minutes, user_request):
 #     return clean_result
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
