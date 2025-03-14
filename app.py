@@ -76,7 +76,7 @@ def handle_message(event):
     minutes = 15           # 根據需求設定
 
     try:
-        GPT_answer = recommend_food(user_address, mode, minutes, user_msg)
+        GPT_answer = main(user_address, mode, minutes, user_msg)
         line_bot_api.reply_message(
             event.reply_token,
             [
