@@ -6,6 +6,16 @@ import pandas as pd
 from collections import Counter, defaultdict
 from datetime import datetime
 from geopy.distance import geodesic
+from flask import Flask, request, abort
+from linebot import (LineBotApi, WebhookHandler)
+from linebot.exceptions import (InvalidSignatureError)
+from linebot.models import *
+from recommendation import main
+import tempfile, os,re
+import datetime
+import openai
+import time
+import traceback
 # from openai import OpenAI OpenAI >= 1.0.0
 
 API = os.getenv('GOOGLE_API_KEY')
@@ -21,7 +31,14 @@ def remove_markdown(text):
     text = re.sub(r'^\s*-\s*', '', text, flags=re.MULTILINE)
     return text
 
-def main():
+def recommend_food_private():
+
+    line_bot_api.reply_message(
+        event.reply_token,
+            TextSendMessage(text="now enter recommend_food_private()"),
+    )
+
+    
     # Type in the request
     address = input('Type in your address: ')
 
