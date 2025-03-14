@@ -24,6 +24,7 @@ def remove_markdown(text):
 def main():
     # Type in the request
     address = input('Type in your address: ')
+
     num = int(input('Choose a number for your mode(1:walking, 2:driving, 3:delivering): '))
     minutes1 = int(input("Type in the minimum minute you want: "))
     mode, profile, minutes = together(num, minutes1)
@@ -93,8 +94,7 @@ def main():
     """
 
     ans = openai_api(full_system_message, request)
-    print(ans)
-
+    print(remove_markdown(ans))
 
 # ------------------------------------------------------------------------------------------------------------------#
 # Tool
@@ -293,38 +293,38 @@ def openai_api(full_system_message, request):
 # 主推薦函數
 
 # def recommend_food(user_address, user_request, mode='walking', profile='foot-walking', minutes=15):
-def recommend_food(user_address, mode, minutes, user_request):
-    mode_mapping = {'walking':'foot-walking', 'driving':'driving-car'}
-    profile = mode_mapping.get(mode, 'foot-walking')
+# def recommend_food(user_address, mode, minutes, user_request):
+#     mode_mapping = {'walking':'foot-walking', 'driving':'driving-car'}
+#     profile = mode_mapping.get(mode, 'foot-walking')
     
-    lat, lng = transform(user_address)
-    _, max_dists = get_isochrone(lat, lng, profile, minutes * 60)
-    restaurants = find_restaurant(lat, lng, minutes, mode, max_dists)
+#     lat, lng = transform(user_address)
+#     _, max_dists = get_isochrone(lat, lng, profile, minutes * 60)
+#     restaurants = find_restaurant(lat, lng, minutes, mode, max_dists)
 
-    parsed_orders = read_data("transformed_orders_details.csv")
-    favorite_foods = get_favorite_foods(parsed_orders)
-    favorite_restaurants = get_favorite_restaurants(parsed_orders)
-    avg_price, max_price, min_price = get_price_distribution(parsed_orders)
-    weights = calculate_order_weight(parsed_orders, datetime.now().strftime('%Y/%m/%d'))
+#     parsed_orders = read_data("transformed_orders_details.csv")
+#     favorite_foods = get_favorite_foods(parsed_orders)
+#     favorite_restaurants = get_favorite_restaurants(parsed_orders)
+#     avg_price, max_price, min_price = get_price_distribution(parsed_orders)
+#     weights = calculate_order_weight(parsed_orders, datetime.now().strftime('%Y/%m/%d'))
 
-    system_message = f"""
-    你是一個餐飲推薦助手。
-    # Rules：
-        1. 優先推薦點餐次數較多的食物。
-        2. 近期點過的品項比久遠的品項權重大。
-        3. 推薦價格應符合使用者平均消費約{avg_price}元，上限為{max_price}元。
-        4. 附近常去的餐廳優先。
-        5. 若無合適的歷史推薦，則以附近高評分餐廳推薦。
+#     system_message = f"""
+#     你是一個餐飲推薦助手。
+#     # Rules：
+#         1. 優先推薦點餐次數較多的食物。
+#         2. 近期點過的品項比久遠的品項權重大。
+#         3. 推薦價格應符合使用者平均消費約{avg_price}元，上限為{max_price}元。
+#         4. 附近常去的餐廳優先。
+#         5. 若無合適的歷史推薦，則以附近高評分餐廳推薦。
 
-    附近餐廳資訊：{restaurants[:10]}
-    喜好餐廳：{favorite_restaurants[:5]}
-    常點餐點：{favorite_foods[:10]}
-    價格區間：平均{avg_price}元，上限{max_price}元
-    """
+#     附近餐廳資訊：{restaurants[:10]}
+#     喜好餐廳：{favorite_restaurants[:5]}
+#     常點餐點：{favorite_foods[:10]}
+#     價格區間：平均{avg_price}元，上限{max_price}元
+#     """
 
-    answer = openai_api(system_message, user_request)
-    clean_answer = remove_markdown(answer)
-    return clean_answer
+#     answer = openai_api(system_message, user_request)
+#     clean_answer = remove_markdown(answer)
+#     return clean_answer
 
 
 # def recommend_food(user_address, mode, minutes, user_request):
