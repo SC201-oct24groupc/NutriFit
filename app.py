@@ -71,7 +71,7 @@ def callback():
 def handle_message(event):
     
     user_msg = event.message.text
-    user_address = "New York, USA"   #overwritten 
+    user_address = "你的預設地址或從使用者獲取"   #根據需求設定 
     mode = 'walking'       # 根據需求設定
     minutes = 15           # 根據需求設定
 
