@@ -93,6 +93,7 @@ def callback():
 
 # Dictionary to store user inputs
 user_data = {}
+@handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_id = event.source.user_id
     user_message = event.message.text.strip()
