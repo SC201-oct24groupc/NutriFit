@@ -12,7 +12,7 @@ from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import *
 
 import tempfile, os, re
-import datetime
+from datetime import datetime
 import openai
 import time
 import traceback
