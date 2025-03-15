@@ -45,6 +45,8 @@ def recommend_food_private(user_address, mode, minutes, event):
         recommend_food_private.mode = 1
     if not hasattr(recommend_food_private, "minutes"):
         recommend_food_private.minutes = 10
+    if not hasattr(recommend_food_private, "request"):
+        recommend_food_private.request = "Italian"
     if not hasattr(recommend_food_private, "stateId"):
         recommend_food_private.stateId = 0
 
@@ -73,13 +75,23 @@ def recommend_food_private(user_address, mode, minutes, event):
         )
         recommend_food_private.minutes1 = int(event.message.text)
         recommend_food_private.stateId = 3
-    # fianlly
+
     elif recommend_food_private.stateId == 3:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="thanks!  Type in your request: "),
+        )
+        recommend_food_private.request = int(event.message.text)
+        recommend_food_private.stateId = 4
+
+    # fianlly
+    elif recommend_food_private.stateId == 4:
 
         # pass over
         address = recommend_food_private.address
         num = recommend_food_private.num
         minutes1 = recommend_food_private.minutes1
+        request = recommend_food_private.request
 
         mode, profile, minutes = together(num, minutes1)
 
@@ -105,7 +117,7 @@ def recommend_food_private(user_address, mode, minutes, event):
         weights = calculate_order_weight(parsed_orders, '2025/03/06')
 
         # Applying Openai API
-        request = input('Type in your request: ')
+        # request = input('Type in your request: ')
 
         # 1. Rules for system
         system_message = """
@@ -149,7 +161,7 @@ def recommend_food_private(user_address, mode, minutes, event):
 
         ans = openai_api(full_system_message, request)
         print(remove_markdown(ans))
-        
+
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=(remove_markdown(ans))),
