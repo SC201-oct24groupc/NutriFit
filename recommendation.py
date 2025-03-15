@@ -44,7 +44,7 @@ def recommend_food_private(user_address, mode, minutes, event):
     if not hasattr(recommend_food_private, "mode"):
         recommend_food_private.mode = 1
     if not hasattr(recommend_food_private, "minutes"):
-        recommend_food_private.minutes = 10
+        recommend_food_private.minutes1 = 10
     if not hasattr(recommend_food_private, "request"):
         recommend_food_private.request = "Italian"
     if not hasattr(recommend_food_private, "stateId"):
