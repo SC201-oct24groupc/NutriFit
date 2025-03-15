@@ -38,7 +38,6 @@ def remove_markdown(text):
 
 
 def recommend_food_private(user_address, mode, minutes, event):
-
     ans = "no response from ChatGPT yet, in recommend_food_private()"
     # static variable
     if not hasattr(recommend_food_private, "address"):
@@ -51,19 +50,21 @@ def recommend_food_private(user_address, mode, minutes, event):
         recommend_food_private.request = "Italian"
     if not hasattr(recommend_food_private, "stateId"):
         recommend_food_private.stateId = 0
+    if not hasattr(recommend_food_private, "replyText"):
+        recommend_food_private.replyText = "not init replyText"
 
-    replyText = ""
+
     if recommend_food_private.stateId < 4:
         if recommend_food_private.stateId == 0:
-            replyText = "welcome to our  recommend food private() assistant! Please input your address:"
+            recommend_food_private.replyText = "welcome to our  recommend food private() assistant! Please input your address:"
         elif recommend_food_private.stateId == 1:
-            replyText = "thanks!  Choose a number for your mode(1:walking, 2:driving, 3:delivering): "
+            recommend_food_private.replyText = "thanks!  Choose a number for your mode(1:walking, 2:driving, 3:delivering): "
         elif recommend_food_private.stateId == 2:
-            replyText = "thanks!  Type in the minimum minute you want: "
+            recommend_food_private.replyText = "thanks!  Type in the minimum minute you want: "
         elif recommend_food_private.stateId == 3:
-            replyText = "thanks!  Type in your request: "
-            
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=replyText),)
+            recommend_food_private.replyText = "thanks!  Type in your request: "
+
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=recommend_food_private.replyText), )
 
     if recommend_food_private.stateId == 0:
         recommend_food_private.address = event.message.text
@@ -76,7 +77,7 @@ def recommend_food_private(user_address, mode, minutes, event):
         print("debug #1:" + str(recommend_food_private.num))
         recommend_food_private.stateId = 2
         return ans
-        
+
     elif recommend_food_private.stateId == 2:
         recommend_food_private.minutes1 = int(event.message.text)
         print("debug #2:" + str(recommend_food_private.minutes1))
@@ -97,7 +98,7 @@ def recommend_food_private(user_address, mode, minutes, event):
         num = recommend_food_private.num
         minutes1 = recommend_food_private.minutes1
         request = recommend_food_private.request
-        print("debug #4:" + address + "num: " + str(num) + " minutes1: " + str(minutes1)  + request)
+        print("debug #4:" + address + "num: " + str(num) + " minutes1: " + str(minutes1) + request)
 
         mode, profile, minutes = together(num, minutes1)
 
