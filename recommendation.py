@@ -22,6 +22,9 @@ API = os.getenv('GOOGLE_API_KEY')
 OR_API_KEY = os.getenv('OR_API_KEY')
 api_key = os.getenv('OPENAI_API_KEY')
 
+# Channel Access Token
+line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
+
 # client = OpenAI(api_key = api_key) OpenAI >= 1.0.0
 def remove_markdown(text):
     text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
