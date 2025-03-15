@@ -109,15 +109,15 @@ def handle_message(event):
         user_data[user_id]["step"] = 1  # Move to next step
     elif step == 1:
         user_data[user_id]["location"] = user_message
-        reply_text = "你想使用哪種交通方式？🚗（步行、自行車、公車等）"
+        reply_text = "你想使用哪種交通方式，回答數字？🚗（1️⃣:步行、2️⃣:自行車、3️⃣:公車等）"
         user_data[user_id]["step"] = 2
     elif step == 2:
         user_data[user_id]["mode"] = user_message
-        reply_text = "請提供時間（例如：下午3點、現在）⌛"
+        reply_text = "請問可接受的交通時間🕒（例如：10，15，20）"
         user_data[user_id]["step"] = 3
     elif step == 3:
         user_data[user_id]["time"] = user_message
-        reply_text = "最後，請說明你的請求內容📝"
+        reply_text = "請告知目前想吃的食物🥣（例如：拉麵，水餃，義大利菜）"
         user_data[user_id]["step"] = 4
     elif step == 4:
         user_data[user_id]["request"] = user_message
