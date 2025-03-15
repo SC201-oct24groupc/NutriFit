@@ -128,7 +128,7 @@ def recommend_food_private(user_address, mode, minutes, event):
 
     line_bot_api.reply_message(
         event.reply_token,
-            TextSendMessage(text=(remove_markdown(ans) ),
+            TextSendMessage(text=(remove_markdown(ans) )),
     )
 
 # ------------------------------------------------------------------------------------------------------------------#
