@@ -43,7 +43,7 @@ def recommend_food_private(user_address, mode, minutes, event):
         recommend_food_private.mode = 1  
     if not hasattr(recommend_food_private, "minutes"):
         recommend_food_private.minutes = 10  
-     if not hasattr(recommend_food_private, "stateId"):
+    if not hasattr(recommend_food_private, "stateId"):
         recommend_food_private.stateId = 0     
 
     
