@@ -37,148 +37,90 @@ def remove_markdown(text):
     return text
 
 
-def recommend_food_private(user_address, mode, minutes, event):
+def recommend_food_private(user_address, mode, minutes, request):
     ans = "no response from ChatGPT yet, in recommend_food_private()"
-    # static variable
-    if not hasattr(recommend_food_private, "address"):
-        recommend_food_private.address = "taipei, taiwan"
-    if not hasattr(recommend_food_private, "num"):
-        recommend_food_private.num = 1
-    if not hasattr(recommend_food_private, "minutes1"):
-        recommend_food_private.minutes1 = 10
-    if not hasattr(recommend_food_private, "request"):
-        recommend_food_private.request = "Italian"
-    if not hasattr(recommend_food_private, "stateId"):
-        recommend_food_private.stateId = 0
-    if not hasattr(recommend_food_private, "replyText"):
-        recommend_food_private.replyText = "not init replyText"
 
-    if recommend_food_private.stateId < 4:
-        if recommend_food_private.stateId == 0:
-            recommend_food_private.replyText = "welcome to our  recommend food private() assistant! Please input your address:"
-        elif recommend_food_private.stateId == 1:
-            recommend_food_private.replyText = "thanks!  Choose a number for your mode(1:walking, 2:driving, 3:delivering): "
-        elif recommend_food_private.stateId == 2:
-            recommend_food_private.replyText = "thanks!  Type in the minimum minute you want: "
-        elif recommend_food_private.stateId == 3:
-            recommend_food_private.replyText = "thanks!  Type in your request: "
+    # pass over
+    address = user_address
+    num = mode
+    minutes1 = minutes
+    request = minutes
+    print("debug #4:" + address + "num: " + str(num) + " minutes1: " + str(minutes1) + request)
 
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=recommend_food_private.replyText), )
+    mode, profile, minutes = together(num, minutes1)
 
-    if recommend_food_private.stateId == 0:
-        recommend_food_private.address = event.message.text
-        print("debug #0:" + recommend_food_private.address)
+    # profile = input('Type in your profile: ')
+    # minutes = int(input("Type in the minimum minute you want: "))
+    # mode = input('Type in your mode: ')
 
-   
+    # Applying the Google API
+    start_time = time.time()
+    lat, lng = transform(address)
+    isochrone_data, max_dists = get_isochrone(lat, lng, profile, minutes * 60)
 
-    elif recommend_food_private.stateId == 1:
-        recommend_food_private.num = int(event.message.text)
-        print("debug #1:" + str(recommend_food_private.num))
+    a = find_restaurant(lat, lng, minutes, mode, max_dists)
+    # print(a)
+    end_time = time.time()
+    print(f'{end_time - start_time:.2f} seconds')
 
-       
+    # Past data loading
+    parsed_orders = read_data("transformed_orders_details.csv")
+    favorite_foods = get_favorite_foods(parsed_orders)
+    favorite_restaurants = get_favorite_restaurants(parsed_orders)
+    avg_price, max_price, min_price = get_price_distribution(parsed_orders)
+    weights = calculate_order_weight(parsed_orders, '2025/03/06')
 
-    elif recommend_food_private.stateId == 2:
-        recommend_food_private.minutes1 = int(event.message.text)
-        print("debug #2:" + str(recommend_food_private.minutes1))
+    # Applying Openai API
+    # request = input('Type in your request: ')
 
-   
+    # 1. Rules for system
+    system_message = """
+    你是個優秀的個人飲食推薦助理，且中文是你的母語，請根據使用者的歷史訂單、最常點的食物、價格範圍與附近的餐廳資料，提供最佳的餐點建議。
 
-    elif recommend_food_private.stateId == 3:
-        recommend_food_private.request = int(event.message.text)
-        print("debug #3:" + recommend_food_private.request)
+    # Rules：
+    1. 優先推薦點餐次數較多的食物，因為這代表使用者的偏好。
+    2. 近期點過的品項比久遠的品項權重大，使用者的口味可能會改變。
+    3. 確保推薦的餐點符合價格範圍，不要超出使用者的預算太多。
+    4. 如果附近有使用者常去的餐廳，請優先推薦該餐廳的餐點。
+    5. 如果沒有找到符合條件的歷史訂單，請根據附近的高評分餐廳來推薦。
+    """
 
-        
+    # 2. Combine the rules, past_data, and restaurant_nearby
+    full_system_message = f"""
+    {system_message}
 
-    # fianlly
-    elif recommend_food_private.stateId == 4:
+    # Past Order：
+    {json.dumps(parsed_orders, ensure_ascii=False, indent=2)}
 
-        # pass over
-        address = recommend_food_private.address
-        num = recommend_food_private.num
-        minutes1 = recommend_food_private.minutes1
-        request = recommend_food_private.request
-        print("debug #4:" + address + "num: " + str(num) + " minutes1: " + str(minutes1) + request)
+    # Favorite food：
+    {json.dumps(favorite_foods, ensure_ascii=False, indent=2)}
 
-        mode, profile, minutes = together(num, minutes1)
+    # Favorite restaurants：
+    {json.dumps(favorite_restaurants, ensure_ascii=False, indent=2)}
 
-        # profile = input('Type in your profile: ')
-        # minutes = int(input("Type in the minimum minute you want: "))
-        # mode = input('Type in your mode: ')
+    # avg_price, max_price, min_price：
+    {json.dumps(avg_price, ensure_ascii=False, indent=2)}
+    {json.dumps(max_price, ensure_ascii=False, indent=2)}
+    {json.dumps(min_price, ensure_ascii=False, indent=2)}
 
-        # Applying the Google API
-        start_time = time.time()
-        lat, lng = transform(address)
-        isochrone_data, max_dists = get_isochrone(lat, lng, profile, minutes * 60)
+    # weights accroding to different dates：
+    {json.dumps(weights, ensure_ascii=False, indent=2)}
 
-        a = find_restaurant(lat, lng, minutes, mode, max_dists)
-        # print(a)
-        end_time = time.time()
-        print(f'{end_time - start_time:.2f} seconds')
+    # 這個檔案是我附近餐廳的資訊
+    # Restaurants nearby：
+    {json.dumps(a, ensure_ascii=False, indent=2)}
 
-        # Past data loading
-        parsed_orders = read_data("transformed_orders_details.csv")
-        favorite_foods = get_favorite_foods(parsed_orders)
-        favorite_restaurants = get_favorite_restaurants(parsed_orders)
-        avg_price, max_price, min_price = get_price_distribution(parsed_orders)
-        weights = calculate_order_weight(parsed_orders, '2025/03/06')
+    請根據附近餐廳的資訊，根據我的喜好，推薦三間符合要求的餐廳，並推薦 1-2 道其餐廳中符合使用者偏好的餐點、其價格與卡路里，並解釋推薦的理由。
+    """
 
-        # Applying Openai API
-        # request = input('Type in your request: ')
+    ans = openai_api(full_system_message, request)
+    print(remove_markdown(ans))
 
-        # 1. Rules for system
-        system_message = """
-        你是個優秀的個人飲食推薦助理，且中文是你的母語，請根據使用者的歷史訂單、最常點的食物、價格範圍與附近的餐廳資料，提供最佳的餐點建議。
 
-        # Rules：
-        1. 優先推薦點餐次數較多的食物，因為這代表使用者的偏好。
-        2. 近期點過的品項比久遠的品項權重大，使用者的口味可能會改變。
-        3. 確保推薦的餐點符合價格範圍，不要超出使用者的預算太多。
-        4. 如果附近有使用者常去的餐廳，請優先推薦該餐廳的餐點。
-        5. 如果沒有找到符合條件的歷史訂單，請根據附近的高評分餐廳來推薦。
-        """
 
-        # 2. Combine the rules, past_data, and restaurant_nearby
-        full_system_message = f"""
-        {system_message}
 
-        # Past Order：
-        {json.dumps(parsed_orders, ensure_ascii=False, indent=2)}
-
-        # Favorite food：
-        {json.dumps(favorite_foods, ensure_ascii=False, indent=2)}
-
-        # Favorite restaurants：
-        {json.dumps(favorite_restaurants, ensure_ascii=False, indent=2)}
-
-        # avg_price, max_price, min_price：
-        {json.dumps(avg_price, ensure_ascii=False, indent=2)}
-        {json.dumps(max_price, ensure_ascii=False, indent=2)}
-        {json.dumps(min_price, ensure_ascii=False, indent=2)}
-
-        # weights accroding to different dates：
-        {json.dumps(weights, ensure_ascii=False, indent=2)}
-
-        # 這個檔案是我附近餐廳的資訊
-        # Restaurants nearby：
-        {json.dumps(a, ensure_ascii=False, indent=2)}
-
-        請根據附近餐廳的資訊，根據我的喜好，推薦三間符合要求的餐廳，並推薦 1-2 道其餐廳中符合使用者偏好的餐點、其價格與卡路里，並解釋推薦的理由。
-        """
-
-        ans = openai_api(full_system_message, request)
-        print(remove_markdown(ans))
-
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=(remove_markdown(ans))),
-        )
-
-    recommend_food_private.stateId = recommend_food_private.stateId+1
-    if recommend_food_private.stateId ==4:
-        recommend_food_private.stateId = 0
 
     return (remove_markdown(ans))
-
 
 
 # ------------------------------------------------------------------------------------------------------------------#
