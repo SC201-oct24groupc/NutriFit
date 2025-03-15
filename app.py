@@ -77,13 +77,13 @@ def handle_message(event):
 
     try:
         GPT_answer = recommend_food_private(user_address, mode, minutes, event)
-        line_bot_api.reply_message(
-            event.reply_token,
-            [
-                TextSendMessage(text="請仿照以下格式輸入：e.g. i want eat taco, in new york USA, 10min drive"),
-                TextSendMessage(text=GPT_answer)
-            ]
-        )
+        # line_bot_api.reply_message(
+        #     event.reply_token,
+        #     [
+        #         TextSendMessage(text="請仿照以下格式輸入：e.g. i want eat taco, in new york USA, 10min drive"),
+        #         TextSendMessage(text=GPT_answer)
+        #     ]
+        # )
     except Exception as e:
         print(traceback.format_exc())
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='抱歉，暫時無法提供推薦'))
