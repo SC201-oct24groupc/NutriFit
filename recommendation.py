@@ -36,19 +36,27 @@ def remove_markdown(text):
 
 def recommend_food_private(user_address, mode, minutes, event):
 
-    user_request = event.message.text
+    
+    # greeting
+    line_bot_api.reply_message(
+        event.reply_token,
+            TextSendMessage(text="welcome to our  recommend food private() assistant! Please input your address:"),
+    )
+
+    address = event.message.text
 
     line_bot_api.reply_message(
         event.reply_token,
-            TextSendMessage(text="now enter recommend_food_private()"),
+            TextSendMessage(text="thanks!  Choose a number for your mode(1:walking, 2:driving, 3:delivering): "),
     )
+    num = int(event.message.text)
 
-    
-    # Type in the request
-    address = input('Type in your address: ')
+    line_bot_api.reply_message(
+        event.reply_token,
+            TextSendMessage(text="thanks!  Type in the minimum minute you want: "),
+    )
+    minutes1 = int(event.message.text)
 
-    num = int(input('Choose a number for your mode(1:walking, 2:driving, 3:delivering): '))
-    minutes1 = int(input("Type in the minimum minute you want: "))
     mode, profile, minutes = together(num, minutes1)
 
     # profile = input('Type in your profile: ')
@@ -117,6 +125,11 @@ def recommend_food_private(user_address, mode, minutes, event):
 
     ans = openai_api(full_system_message, request)
     print(remove_markdown(ans))
+
+    line_bot_api.reply_message(
+        event.reply_token,
+            TextSendMessage(text=(remove_markdown(ans) ),
+    )
 
 # ------------------------------------------------------------------------------------------------------------------#
 # Tool
