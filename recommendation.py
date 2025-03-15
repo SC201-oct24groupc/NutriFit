@@ -36,26 +36,48 @@ def remove_markdown(text):
 
 def recommend_food_private(user_address, mode, minutes, event):
 
+    # static variable
+    if not hasattr(recommend_food_private, "address"):
+        recommend_food_private.address = "taipei, taiwan" 
+    if not hasattr(recommend_food_private, "mode"):
+        recommend_food_private.mode = 1  
+    if not hasattr(recommend_food_private, "minutes"):
+        recommend_food_private.minutes = 10  
+     if not hasattr(recommend_food_private, "stateId"):
+        recommend_food_private.stateId = 0     
+
     
-    # greeting
-    line_bot_api.reply_message(
-        event.reply_token,
-            TextSendMessage(text="welcome to our  recommend food private() assistant! Please input your address:"),
-    )
+    if recommend_food_private.stateId == 0:
+        line_bot_api.reply_message(
+            event.reply_token,
+                TextSendMessage(text="welcome to our  recommend food private() assistant! Please input your address:"),
+        )
+        recommend_food_private.address = event.message.text
+        recommend_food_private.stateId = 1
+        
+    if recommend_food_private.stateId == 1:
+        line_bot_api.reply_message(
+            event.reply_token,
+                TextSendMessage(text="thanks!  Choose a number for your mode(1:walking, 2:driving, 3:delivering): "),
+        )
+        recommend_food_private.num = int(event.message.text)
+        recommend_food_private.stateId = 2
 
-    address = event.message.text
+    if recommend_food_private.stateId == 2:
+        line_bot_api.reply_message(
+            event.reply_token,
+                TextSendMessage(text="thanks!  Type in the minimum minute you want: "),
+        )
+        recommend_food_private.minutes1 = int(event.message.text)
+        recommend_food_private.stateId = 3
 
-    line_bot_api.reply_message(
-        event.reply_token,
-            TextSendMessage(text="thanks!  Choose a number for your mode(1:walking, 2:driving, 3:delivering): "),
-    )
-    num = int(event.message.text)
 
-    line_bot_api.reply_message(
-        event.reply_token,
-            TextSendMessage(text="thanks!  Type in the minimum minute you want: "),
-    )
-    minutes1 = int(event.message.text)
+    # pass over
+    address = recommend_food_private.address
+    num = recommend_food_private.num
+    minutes1 = recommend_food_private.minutes1
+    
+
 
     mode, profile, minutes = together(num, minutes1)
 
@@ -126,10 +148,14 @@ def recommend_food_private(user_address, mode, minutes, event):
     ans = openai_api(full_system_message, request)
     print(remove_markdown(ans))
 
-    line_bot_api.reply_message(
-        event.reply_token,
-            TextSendMessage(text=(remove_markdown(ans) )),
-    )
+    # fianlly
+    if recommend_food_private.stateId == 3:
+        line_bot_api.reply_message(
+            event.reply_token,
+                TextSendMessage(text=(remove_markdown(ans) )),
+        )
+        recommend_food_private.stateId == 0
+        
 
 # ------------------------------------------------------------------------------------------------------------------#
 # Tool
