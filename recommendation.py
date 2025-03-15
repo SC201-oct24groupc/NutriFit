@@ -60,6 +60,7 @@ def recommend_food_private(user_address, mode, minutes, event):
         recommend_food_private.address = event.message.text
         print("debug #0:" + recommend_food_private.address)
         recommend_food_private.stateId = 1
+        return ans
 
 
     elif recommend_food_private.stateId == 1:
@@ -70,6 +71,7 @@ def recommend_food_private(user_address, mode, minutes, event):
         recommend_food_private.num = int(event.message.text)
         print("debug #1:" + str(recommend_food_private.num))
         recommend_food_private.stateId = 2
+        return ans
 
 
     elif recommend_food_private.stateId == 2:
@@ -80,6 +82,7 @@ def recommend_food_private(user_address, mode, minutes, event):
         recommend_food_private.minutes1 = int(event.message.text)
         print("debug #2:" + str(recommend_food_private.minutes1))
         recommend_food_private.stateId = 3
+        return ans
 
     elif recommend_food_private.stateId == 3:
         line_bot_api.reply_message(
@@ -89,6 +92,7 @@ def recommend_food_private(user_address, mode, minutes, event):
         recommend_food_private.request = int(event.message.text)
         print("debug #3:" + recommend_food_private.request)
         recommend_food_private.stateId = 4
+        return ans
 
     # fianlly
     elif recommend_food_private.stateId == 4:
