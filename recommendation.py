@@ -38,6 +38,8 @@ def remove_markdown(text):
 
 
 def recommend_food_private(user_address, mode, minutes, event):
+
+    ans = "no response from ChatGPT yet, in recommend_food_private()"
     # static variable
     if not hasattr(recommend_food_private, "address"):
         recommend_food_private.address = "taipei, taiwan"
@@ -167,6 +169,7 @@ def recommend_food_private(user_address, mode, minutes, event):
             TextSendMessage(text=(remove_markdown(ans))),
         )
         recommend_food_private.stateId == 0
+    return (remove_markdown(ans))
 
 
 # ------------------------------------------------------------------------------------------------------------------#
