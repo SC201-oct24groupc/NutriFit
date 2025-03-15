@@ -58,6 +58,7 @@ def recommend_food_private(user_address, mode, minutes, event):
             TextSendMessage(text="welcome to our  recommend food private() assistant! Please input your address:"),
         )
         recommend_food_private.address = event.message.text
+        print("debug #0:" + recommend_food_private.address)
         recommend_food_private.stateId = 1
 
 
@@ -67,6 +68,7 @@ def recommend_food_private(user_address, mode, minutes, event):
             TextSendMessage(text="thanks!  Choose a number for your mode(1:walking, 2:driving, 3:delivering): "),
         )
         recommend_food_private.num = int(event.message.text)
+        print("debug #1:" + str(recommend_food_private.num))
         recommend_food_private.stateId = 2
 
 
@@ -76,6 +78,7 @@ def recommend_food_private(user_address, mode, minutes, event):
             TextSendMessage(text="thanks!  Type in the minimum minute you want: "),
         )
         recommend_food_private.minutes1 = int(event.message.text)
+        print("debug #2:" + str(recommend_food_private.minutes1))
         recommend_food_private.stateId = 3
 
     elif recommend_food_private.stateId == 3:
@@ -84,6 +87,7 @@ def recommend_food_private(user_address, mode, minutes, event):
             TextSendMessage(text="thanks!  Type in your request: "),
         )
         recommend_food_private.request = int(event.message.text)
+        print("debug #3:" + recommend_food_private.request)
         recommend_food_private.stateId = 4
 
     # fianlly
@@ -94,6 +98,7 @@ def recommend_food_private(user_address, mode, minutes, event):
         num = recommend_food_private.num
         minutes1 = recommend_food_private.minutes1
         request = recommend_food_private.request
+        print("debug #4:" + address + "num: " + str(num) + " minutes1: " + str(minutes1)  + request)
 
         mode, profile, minutes = together(num, minutes1)
 
@@ -168,7 +173,7 @@ def recommend_food_private(user_address, mode, minutes, event):
             event.reply_token,
             TextSendMessage(text=(remove_markdown(ans))),
         )
-        recommend_food_private.stateId == 0
+        recommend_food_private.stateId = 0
     return (remove_markdown(ans))
 
 
