@@ -42,10 +42,10 @@ def recommend_food_private(user_address, mode, minutes, request):
 
     # pass over
     address = user_address
-    num = mode
-    minutes1 = minutes
+    num = int(mode)
+    minutes1 = int(minutes)
     request = request
-    print("debug #4:" + address + "num: " + str(num) + " minutes1: " + str(minutes1) + request)
+    print("***debug #4***  address:" + address + ", num: " + str(num) +  " , minutes1: " + str(minutes1) +   " , request: " + request)
 
     mode, profile, minutes = together(num, minutes1)
 
