@@ -34,7 +34,9 @@ def remove_markdown(text):
     text = re.sub(r'^\s*-\s*', '', text, flags=re.MULTILINE)
     return text
 
-def recommend_food_private(user_address, mode, minutes, user_request):
+def recommend_food_private(user_address, mode, minutes, event):
+
+    user_request = event.message.text
 
     line_bot_api.reply_message(
         event.reply_token,
