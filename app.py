@@ -68,25 +68,77 @@ def callback():
 #     except:
 #         print(traceback.format_exc())
 #         line_bot_api.reply_message(event.reply_token, TextSendMessage('Hungry,I am not connected'))
-def handle_message(event):
-    
-    user_msg = event.message.text
-    user_address = "你的預設地址或從使用者獲取"   #根據需求設定 
-    mode = 'walking'       # 根據需求設定
-    minutes = 15           # 根據需求設定
 
-    try:
-        GPT_answer = recommend_food_private(user_address, mode, minutes, event)
-        # line_bot_api.reply_message(
-        #     event.reply_token,
-        #     [
-        #         TextSendMessage(text="請仿照以下格式輸入：e.g. i want eat taco, in new york USA, 10min drive"),
-        #         TextSendMessage(text=GPT_answer)
-        #     ]
-        # )
-    except Exception as e:
-        print(traceback.format_exc())
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='抱歉，暫時無法提供推薦'))
+
+# def handle_message(event):
+    
+#     user_msg = event.message.text
+#     user_address = "你的預設地址或從使用者獲取"   #根據需求設定 
+#     mode = 'walking'       # 根據需求設定
+#     minutes = 15           # 根據需求設定
+
+#     try:
+#         GPT_answer = recommend_food_private(user_address, mode, minutes, event)
+#         # line_bot_api.reply_message(
+#         #     event.reply_token,
+#         #     [
+#         #         TextSendMessage(text="請仿照以下格式輸入：e.g. i want eat taco, in new york USA, 10min drive"),
+#         #         TextSendMessage(text=GPT_answer)
+#         #     ]
+#         # )
+#     except Exception as e:
+#         print(traceback.format_exc())
+#         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='抱歉，暫時無法提供推薦'))
+
+
+# Dictionary to store user inputs
+user_data = {}
+def handle_message(event):
+    user_id = event.source.user_id
+    user_message = event.message.text.strip()
+
+    # Initialize user data if not exists
+    if user_id not in user_data:
+        user_data[user_id] = {"step": 0, "location": "", "mode": "", "time": "", "request": ""}
+
+    step = user_data[user_id]["step"]
+
+    if step == 0:
+        reply_text = "請提供你的地點📍"
+        user_data[user_id]["step"] = 1  # Move to next step
+    elif step == 1:
+        user_data[user_id]["location"] = user_message
+        reply_text = "你想使用哪種交通方式？🚗（步行、自行車、公車等）"
+        user_data[user_id]["step"] = 2
+    elif step == 2:
+        user_data[user_id]["mode"] = user_message
+        reply_text = "請提供時間（例如：下午3點、現在）⌛"
+        user_data[user_id]["step"] = 3
+    elif step == 3:
+        user_data[user_id]["time"] = user_message
+        reply_text = "最後，請說明你的請求內容📝"
+        user_data[user_id]["step"] = 4
+    elif step == 4:
+        user_data[user_id]["request"] = user_message
+        GPT_answer = recommend_food_private(user_data[user_id]["location"], int(user_data[user_id]["mode"]) ,
+                                            int(user_data[user_id]["time"]), user_data[user_id]["request"] )
+
+        # Final confirmation message
+        reply_text = f"📌 **您的請求已記錄** 📌\n\n"
+        reply_text += f"📍 地點: {user_data[user_id]['location']}\n"
+        reply_text += f"🚗 交通方式: {user_data[user_id]['mode']}\n"
+        reply_text += f"⌛ 時間: {user_data[user_id]['time']}\n"
+        reply_text += f"📝 請求內容: {user_data[user_id]['request']}\n\n"
+        reply_text += GPT_answer
+
+        # Reset user data after completion
+        user_data[user_id]["step"] = 0
+
+    # Send the response message
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=reply_text)
+    )
 
 @handler.add(PostbackEvent)
 def handle_message(event):
