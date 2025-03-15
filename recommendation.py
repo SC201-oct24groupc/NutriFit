@@ -69,25 +69,25 @@ def recommend_food_private(user_address, mode, minutes, event):
         recommend_food_private.address = event.message.text
         print("debug #0:" + recommend_food_private.address)
 
-        return ans
+   
 
     elif recommend_food_private.stateId == 1:
         recommend_food_private.num = int(event.message.text)
         print("debug #1:" + str(recommend_food_private.num))
 
-        return ans
+       
 
     elif recommend_food_private.stateId == 2:
         recommend_food_private.minutes1 = int(event.message.text)
         print("debug #2:" + str(recommend_food_private.minutes1))
 
-        return ans
+   
 
     elif recommend_food_private.stateId == 3:
         recommend_food_private.request = int(event.message.text)
         print("debug #3:" + recommend_food_private.request)
 
-        return ans
+        
 
     # fianlly
     elif recommend_food_private.stateId == 4:
