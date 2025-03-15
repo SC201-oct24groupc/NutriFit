@@ -54,22 +54,25 @@ def recommend_food_private(user_address, mode, minutes, event):
         )
         recommend_food_private.address = event.message.text
         recommend_food_private.stateId = 1
+        return 0
         
-    if recommend_food_private.stateId == 1:
+    elif recommend_food_private.stateId == 1:
         line_bot_api.reply_message(
             event.reply_token,
                 TextSendMessage(text="thanks!  Choose a number for your mode(1:walking, 2:driving, 3:delivering): "),
         )
         recommend_food_private.num = int(event.message.text)
         recommend_food_private.stateId = 2
+        return 0
 
-    if recommend_food_private.stateId == 2:
+    elif recommend_food_private.stateId == 2:
         line_bot_api.reply_message(
             event.reply_token,
                 TextSendMessage(text="thanks!  Type in the minimum minute you want: "),
         )
         recommend_food_private.minutes1 = int(event.message.text)
         recommend_food_private.stateId = 3
+        return 0
 
 
     # pass over
@@ -155,6 +158,7 @@ def recommend_food_private(user_address, mode, minutes, event):
                 TextSendMessage(text=(remove_markdown(ans) )),
         )
         recommend_food_private.stateId == 0
+        return 0    
         
 
 # ------------------------------------------------------------------------------------------------------------------#
