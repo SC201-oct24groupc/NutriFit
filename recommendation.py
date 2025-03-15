@@ -53,7 +53,6 @@ def recommend_food_private(user_address, mode, minutes, event):
     if not hasattr(recommend_food_private, "replyText"):
         recommend_food_private.replyText = "not init replyText"
 
-
     if recommend_food_private.stateId < 4:
         if recommend_food_private.stateId == 0:
             recommend_food_private.replyText = "welcome to our  recommend food private() assistant! Please input your address:"
@@ -69,25 +68,25 @@ def recommend_food_private(user_address, mode, minutes, event):
     if recommend_food_private.stateId == 0:
         recommend_food_private.address = event.message.text
         print("debug #0:" + recommend_food_private.address)
-        recommend_food_private.stateId = 1
+
         return ans
 
     elif recommend_food_private.stateId == 1:
         recommend_food_private.num = int(event.message.text)
         print("debug #1:" + str(recommend_food_private.num))
-        recommend_food_private.stateId = 2
+
         return ans
 
     elif recommend_food_private.stateId == 2:
         recommend_food_private.minutes1 = int(event.message.text)
         print("debug #2:" + str(recommend_food_private.minutes1))
-        recommend_food_private.stateId = 3
+
         return ans
 
     elif recommend_food_private.stateId == 3:
         recommend_food_private.request = int(event.message.text)
         print("debug #3:" + recommend_food_private.request)
-        recommend_food_private.stateId = 4
+
         return ans
 
     # fianlly
@@ -173,8 +172,13 @@ def recommend_food_private(user_address, mode, minutes, event):
             event.reply_token,
             TextSendMessage(text=(remove_markdown(ans))),
         )
+
+    recommend_food_private.stateId = recommend_food_private.stateId+1
+    if recommend_food_private.stateId ==4:
         recommend_food_private.stateId = 0
+
     return (remove_markdown(ans))
+
 
 
 # ------------------------------------------------------------------------------------------------------------------#
